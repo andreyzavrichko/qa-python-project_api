@@ -1,6 +1,7 @@
 import allure
 
 from api.order_api import OrderApi
+from data.test_data import MSG_NOT_AUTHORISED
 
 
 @allure.feature("Order")
@@ -24,4 +25,4 @@ class TestGetOrders:
 
         assert response.status_code == 401
         assert response.json()["success"] is False
-        assert response.json()["message"] == "You should be authorised"
+        assert response.json()["message"] == MSG_NOT_AUTHORISED

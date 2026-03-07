@@ -2,7 +2,8 @@ import allure
 
 from api.auth_api import AuthApi
 from api.user_api import UserApi
-from data.data_generator import get_user, get_duplicate_user, get_user_with_empty_fields
+from data.data_generator import get_user
+from data.test_data import EXISTING_USER, USER_WITH_EMPTY_FIELDS, MSG_USER_ALREADY_EXISTS, MSG_REQUIRED_FIELDS
 
 
 @allure.feature("User")
@@ -25,19 +26,17 @@ class TestCreateUser:
     @allure.title("Создание пользователя, уже зарегистрированного в системе")
     @allure.severity(allure.severity_level.CRITICAL)
     def test_create_duplicate_user(self):
-        payload = get_duplicate_user()
-        response = UserApi.create_user(payload)
+        response = UserApi.create_user(EXISTING_USER.copy())
 
         assert response.status_code == 403
         assert response.json()["success"] is False
-        assert response.json()["message"] == "User already exists"
+        assert response.json()["message"] == MSG_USER_ALREADY_EXISTS
 
     @allure.title("Создание пользователя с незаполненными обязательными полями")
     @allure.severity(allure.severity_level.CRITICAL)
     def test_create_user_with_empty_fields(self):
-        payload = get_user_with_empty_fields()
-        response = UserApi.create_user(payload)
+        response = UserApi.create_user(USER_WITH_EMPTY_FIELDS.copy())
 
         assert response.status_code == 403
         assert response.json()["success"] is False
-        assert response.json()["message"] == "Email, password and name are required fields"
+        assert response.json()["message"] == MSG_REQUIRED_FIELDS

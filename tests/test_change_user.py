@@ -2,6 +2,7 @@ import allure
 
 from api.user_api import UserApi
 from data.data_generator import get_user
+from data.test_data import MSG_NOT_AUTHORISED
 
 
 @allure.feature("User")
@@ -65,7 +66,7 @@ class TestChangeUser:
 
         assert response.status_code == 401
         assert response.json()["success"] is False
-        assert response.json()["message"] == "You should be authorised"
+        assert response.json()["message"] == MSG_NOT_AUTHORISED
 
     @allure.title("Изменение имени пользователя без авторизации")
     @allure.severity(allure.severity_level.CRITICAL)
@@ -76,7 +77,7 @@ class TestChangeUser:
 
         assert response.status_code == 401
         assert response.json()["success"] is False
-        assert response.json()["message"] == "You should be authorised"
+        assert response.json()["message"] == MSG_NOT_AUTHORISED
 
     @allure.title("Изменение пароля пользователя без авторизации")
     @allure.severity(allure.severity_level.CRITICAL)
@@ -87,4 +88,4 @@ class TestChangeUser:
 
         assert response.status_code == 401
         assert response.json()["success"] is False
-        assert response.json()["message"] == "You should be authorised"
+        assert response.json()["message"] == MSG_NOT_AUTHORISED

@@ -1,9 +1,7 @@
 import allure
 
 from api.order_api import OrderApi
-from data.data_generator import get_valid_ingredients, get_invalid_ingredients
-
-EXPECTED_BURGER_NAME = "Экзо-плантаго бургер"
+from data.test_data import VALID_INGREDIENTS, INVALID_INGREDIENTS, EXPECTED_BURGER_NAME, MSG_NO_INGREDIENTS
 
 
 @allure.feature("Order")
@@ -13,8 +11,7 @@ class TestCreateOrder:
     @allure.title("Создание заказа без авторизации, с ингредиентами")
     @allure.severity(allure.severity_level.CRITICAL)
     def test_create_order_without_auth_with_ingredients(self):
-        payload = get_valid_ingredients()
-        response = OrderApi.create_order_without_auth(payload)
+        response = OrderApi.create_order_without_auth(VALID_INGREDIENTS)
 
         assert response.status_code == 200
         assert response.json()["success"] is True
@@ -24,8 +21,7 @@ class TestCreateOrder:
     @allure.severity(allure.severity_level.CRITICAL)
     def test_create_order_with_auth_with_ingredients(self, new_user):
         token = new_user["token"]
-        payload = get_valid_ingredients()
-        response = OrderApi.create_order_with_auth(payload, token)
+        response = OrderApi.create_order_with_auth(VALID_INGREDIENTS, token)
 
         assert response.status_code == 200
         assert response.json()["success"] is True
@@ -38,12 +34,11 @@ class TestCreateOrder:
 
         assert response.status_code == 400
         assert response.json()["success"] is False
-        assert response.json()["message"] == "Ingredient ids must be provided"
+        assert response.json()["message"] == MSG_NO_INGREDIENTS
 
     @allure.title("Создание заказа с неверными хэшами ингредиентов")
     @allure.severity(allure.severity_level.CRITICAL)
     def test_create_order_with_invalid_ingredient_hashes(self):
-        payload = get_invalid_ingredients()
-        response = OrderApi.create_order_without_auth(payload)
+        response = OrderApi.create_order_without_auth(INVALID_INGREDIENTS)
 
         assert response.status_code == 400
